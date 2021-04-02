@@ -10,6 +10,9 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
+  
+  security.sudo.wheelNeedsPassword = false;
+
   networking.hostName = "nixos";
   networking.networkmanager.enable = true;
 
@@ -86,6 +89,30 @@
             plugin = goyo;
             config = "nnoremap <C-g> :Goyo<CR>";
           }
+          {
+            plugin = changeColorScheme-vim;
+            config = ''
+              nnoremap <F5> :call NextColorScheme()<CR>
+              nnoremap <F4> :call PreviousColorScheme()<CR>
+            '';
+          }
+          {
+            plugin = awesome-vim-colorschemes;
+            config = "colorscheme sierra";
+          }
+          {
+            plugin = gitgutter;
+            config = ''
+              let g:gitgutter_sign_added = '+'
+              let g:gitgutter_sign_modified = '>'
+              let g:gitgutter_sign_removed = '-'
+              let g:gitgutter_sign_removed_first_line = '^'
+              let g:gitgutter_sign_modified_removed = '<'
+              let g:gitgutter_override_sign_column_highlight = 1
+              highlight SignColumn guibg=bg
+              highlight SignColumn ctermbg=bg
+            '';
+          }
 	      ];
       };
       zsh = {
@@ -97,6 +124,9 @@
         };
         shellAliases = {
           "enrc" = "sudoedit /etc/nixos/configuration.nix";
+          "cat" = "bat";
+          "nxg" = "sudo nix-collect-garbage -d";
+          "nrs" = "sudo nixos-rebuild switch";
         };
       };
     };
