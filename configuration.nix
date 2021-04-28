@@ -6,39 +6,56 @@
       ./hardware-configuration.nix
       <home-manager/nixos>
     ];
-
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
-
+  
+  boot = {
+    loader = {
+      systemd-boot.enable = true;
+      efi.canTouchEfiVariables = true;
+    };
+  };
   
   security.sudo.wheelNeedsPassword = false;
-
-  networking.hostName = "nixos";
-  networking.networkmanager.enable = true;
-
+  
+  networking = {
+    hostName = "nixos";
+    networkmanager.enable = true;
+    firewall.allowedTCPPorts = [
+      8080
+    ];
+  };
+  
   time.timeZone = "Europe/Istanbul";
-
-  networking.useDHCP = false;
-  networking.interfaces.eno1.useDHCP = true;
-  networking.interfaces.wlo1.useDHCP = true;
 
   i18n.defaultLocale = "en_US.UTF-8";
   console = {
     font = "Lat2-Terminus16";
     keyMap = "trq";
   };
-
+  
+  services.gnome3 = {
+    chrome-gnome-shell.enable = true;
+  };
+  
   services.xserver = {
     enable = true;
     layout = "tr";
     xkbOptions = "eurosign:e";
-    desktopManager.plasma5.enable = true;
-    displayManager.sddm.enable = true;
+    desktopManager.gnome3.enable = true;
+    displayManager.gdm.enable = true;
   };
   
+  services.xserver.videoDrivers = [ "nvidia" ];
+
+  hardware.nvidia.prime = {
+    offload.enable = true;
+    intelBusId = "PCI:0:02:0";
+    nvidiaBusId = "PCI:1:00:0";
+  };
+
   systemd.services.bd_prochot_off = {
     wantedBy = [ "graphical.target" ];
     path = with pkgs; [ module_init_tools msr-tools bc ]; 
+    description = "Disables BD PROCHOT";
     script = 
     ''
       modprobe msr
@@ -47,6 +64,10 @@
       f=$(($s&0xFFFFE))
       wrmsr 0x1FC "obase=16;$f" | bc
     '';
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = "Yes";
+    };
   };
 
   sound.enable = true;
@@ -54,7 +75,7 @@
 
   users.users.necdet = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "networkmanager" "docker" "libvirtd" ];
+    extraGroups = [ "wheel" "networkmanager" "docker" "libvirtd" "wireshark" ];
     shell = pkgs.zsh;
   };
   
@@ -75,16 +96,18 @@
           set shiftwidth=2
           set autoindent
           set showcmd
+          let mapleader=','
         ";
         viAlias = true;
         vimAlias = true;
         plugins = with pkgs.vimPlugins; [
           vim-nix
+          nerdcommenter
+          lightline-vim
           {
             plugin = nerdtree;
             config = "nnoremap <C-t> :NERDTreeToggle <CR>";
           }
-          lightline-vim
           {
             plugin = goyo;
             config = "nnoremap <C-g> :Goyo<CR>";
@@ -119,8 +142,8 @@
         enable = true;
         oh-my-zsh = {
           enable = true;
-          theme = "gentoo";
-          plugins = [ "git" ];
+          theme = "cloud";
+          plugins = [ "git" "man" ];
         };
         shellAliases = {
           "enrc" = "sudoedit /etc/nixos/configuration.nix";
@@ -156,14 +179,11 @@
     zsh
     postman
     nodejs
-    oh-my-zsh
     htop
     qemu_kvm
     libvirt
     ghc
     virt-manager
-    uget 
-    uget-integrator
     home-manager
     linuxPackages.cpupower
     i7z
@@ -180,15 +200,61 @@
     nix-index
     bat
     obs-studio
+    docker-compose
+    wireshark
+    nodePackages.http-server
+    gnomeExtensions.dash-to-dock
+    gnome3.gnome-tweak-tool
+    jetbrains.idea-ultimate
+    go
+    golint
+    go-outline
+    gopkgs
+    delve
+    gopls
+    gnome3.ghex
+    pciutils
+    (pkgs.writeShellScriptBin "nvidia-offload" ''
+      export __NV_PRIME_RENDER_OFFLOAD=1
+      export __NV_PRIME_RENDER_OFFLOAD_PROVIDER=NVIDIA-G0
+      export __GLX_VENDOR_LIBRARY_NAME=nvidia
+      export __VK_LAYER_NV_optimus=NVIDIA_only
+      exec -a "$0" "$@"
+    '')
+    maven
+    patchelf
+    steam
+    jetbrains.clion
+    stdenv
+    platformio
   ];
 
-  nixpkgs.config.permittedInsecurePackages = [
-    "adobe-reader-9.5.5-1"
+  fonts.fonts = with pkgs; [
+    caladea
+    carlito
+    dejavu_fonts
+    gentium
+    liberation_ttf
+    libertine
+    noto-fonts
+    source-code-pro
+    source-sans-pro
+    source-serif-pro
+    anonymousPro
+    nerdfonts
+    font-awesome
   ];
 
   virtualisation = {
     docker.enable = true;
     libvirtd.enable = true;
+  };
+
+  programs.wireshark.enable = true;
+
+  programs.java = {
+    enable = true;
+    package = pkgs.jdk11;
   };
 
   powerManagement = {
