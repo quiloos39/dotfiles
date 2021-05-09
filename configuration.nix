@@ -12,6 +12,7 @@
       systemd-boot.enable = true;
       efi.canTouchEfiVariables = true;
     };
+    supportedFilesystems = [ "ntfs" ];
   };
   
   security.sudo.wheelNeedsPassword = false;
@@ -227,6 +228,9 @@
     jetbrains.clion
     stdenv
     platformio
+    etcher
+    haskellPackages.phoityne-vscode
+    woeusb
   ];
 
   fonts.fonts = with pkgs; [
