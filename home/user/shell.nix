@@ -1,12 +1,11 @@
-{ pkgs, ... }:
-{
+{pkgs, ...}: {
   programs.ssh.extraConfig = ''
     ForwardAgent yes
   '';
   programs.zsh.enable = true;
   home-manager.users.necdet = {
     home = {
-      packages = with pkgs; [ zsh-completions nix-zsh-completions ];
+      packages = with pkgs; [zsh-completions nix-zsh-completions];
       shellAliases = {
         "enrc" = "code /etc/nixos/";
         "nrs" = "sudo nixos-rebuild switch --upgrade";
@@ -14,7 +13,6 @@
       sessionVariables = {
         EDITOR = "nvim";
         VISUAL = "nvim";
-        DOCKER_BUILDKIT = "1";
       };
     };
     programs = {
@@ -25,12 +23,11 @@
         oh-my-zsh = {
           enable = true;
           theme = "lambda";
-          plugins =
-            [ "git" "man" "colored-man-pages" "tmux" "docker" "npm" "gcloud" "aws" ];
+          plugins = ["git" "man" "colored-man-pages" "tmux" "docker" "npm" "gcloud" "aws"];
           extraConfig = ''
             export PATH=~/.npm-packages/bin:$PATH
             export NODE_PATH=~/.npm-packages/lib/node_modules
-            export ANDROID_HOME=/home/necdet/Android
+            export PUPPETEER_EXECUTABLE_PATH=$(which google-chrome-beta)
           '';
         };
       };

@@ -1,4 +1,4 @@
-{ ... }: {
+{...}: {
   imports = [
     ./users.nix
     ./network.nix
@@ -8,5 +8,6 @@
     ./packages.nix
     ./multitouch.nix
     ./sound.nix
+    ./samba.nix
   ];
 }

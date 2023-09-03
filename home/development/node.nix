@@ -1,8 +1,7 @@
-{ pkgs, ... }:
-let
-  node = pkgs.nodejs-18_x;
-in
-{
+{pkgs, ...}: let
+  node = pkgs.nodejs_16;
+in {
+  nixpkgs.config.permittedInsecurePackages = ["nodejs-16.20.1"];
   home-manager.users.necdet = {
     home.packages = with pkgs; [
       node

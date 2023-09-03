@@ -1,15 +1,13 @@
-{ pkgs, ... }: {
+{pkgs, ...}: {
   security.sudo.wheelNeedsPassword = false;
   users.users = {
     necdet = {
       isNormalUser = true;
       description = "necdet";
-      extraGroups = [ "wheel" "adbusers" ];
+      extraGroups = ["wheel"];
       shell = pkgs.zsh;
     };
   };
-  environment.shells = [ pkgs.zsh ];
-  services.udev.packages = [
-    pkgs.android-udev-rules
-  ];
+  programs.zsh.enable = true;
+  environment.shells = [pkgs.zsh];
 }

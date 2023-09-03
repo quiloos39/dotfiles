@@ -1,4 +1,4 @@
-{ ... }: {
+{...}: {
   # Enables sound
   sound.enable = true;
   services.pipewire = {
@@ -10,17 +10,11 @@
   };
 
   hardware.pulseaudio.enable = false;
-  # hardware.pulseaudio = {
-  #   enable = true;
-  #   extraModules = [ pkgs.pulseaudio-modules-bt ];
-  #   package = pkgs.pulseaudioFull;
-  # };
-
   hardware.bluetooth.settings = {
     General = {
       Enable = "Source,Sink,Media,Socket";
     };
   };
 
-  users.users.necdet.extraGroups = [ "audio" ];
+  users.users.necdet.extraGroups = ["audio"];
 }

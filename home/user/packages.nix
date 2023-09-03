@@ -1,6 +1,19 @@
-{ pkgs, ... }:
-{
+{pkgs, ...}: let
+  lens_5_2 =
+    (import (builtins.fetchTarball {
+      url = "https://github.com/NixOS/nixpkgs/archive/f6e2e3a1e15a1670a73817f3ef58c561e35ebb40.tar.gz";
+    }) {})
+    .pkgs
+    .lens;
+in {
   home-manager.users.necdet = {
+    # programs.kodi = {
+    #   enable = true;
+    # };
+    programs.k9s.enable = true;
+    programs.k9s.settings = {
+      refreshRate = 1;
+    };
     home = {
       packages = with pkgs; [
         discord
@@ -15,17 +28,15 @@
         xclip
         tmux
         htop
-        redir
         redli
         bat
         wget
         rnix-lsp
-        nixfmt
         # whatsapp-for-linux
         act
         # patchelf
         # nix-index
-        xsel
+        # xsel
         # x2goclient
         unzip
         gdrive
@@ -50,13 +61,11 @@
         uget
         opera
         stripe-cli
-        sqlite
         wireshark
         postman
         blender
         bottles
         wine64
-        act
         winetricks
         kubectl
         minikube
@@ -66,10 +75,25 @@
         inetutils
         hexchat
         wireshark
-        android-tools
-        android-studio
+        # android-tools
+        # android-studio
         caddy
-        cloudflared
+        playonlinux
+        alejandra
+        # cloudflared
+        argocd
+        terraform
+        lens_5_2
+        dconf
+        unrar
+        # gns3-gui
+        # gns3-server
+        # dynamips
+        # ubridge
+        inetutils
+        # aws-nuke
+        # unifi
+        etcher
       ];
     };
   };
